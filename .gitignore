@@ -1,0 +1,15 @@
+# Ignore virtual environment
+llm_proj
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment files
+.env
+
+# macOS system files
+.DS_Store
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
