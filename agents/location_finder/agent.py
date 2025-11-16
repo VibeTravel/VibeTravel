@@ -36,10 +36,24 @@ location_finder_agent = Agent(
     tools=[google_search],
 )
 
+rating_instructions = load_instruction_from_file("destination_rating.txt")
+
+destination_rater_agent = Agent(
+    name="destination_rater_agent",
+    model="gemini-2.5-flash",
+    instruction=rating_instructions,
+    description="Shows destinations one-by-one, asks user for ratings, and classifies into preferred/unpreferred lists.",
+    output_key="destination_rating_results"
+)
 root_agent = SequentialAgent(
     name="location_finder_root_agent",
-    sub_agents=[trip_input_agent, location_finder_agent],
-    description="An agent that first collects trip details and then suggests locations.",
+    sub_agents=[
+        trip_input_agent,
+        location_finder_agent,
+        destination_rater_agent
+    ],
+    description="Collects trip details → finds locations → rates destinations."
 )
+
 # Expose the agent you want ADK to load when selecting this app folder
 # root_agent = location_finder_agent
