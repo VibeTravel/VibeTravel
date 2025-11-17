@@ -27,3 +27,60 @@
 #     tools=[location_tool, flight_tool, hotel_tool, itinerary_tool, parser_tool],
 # )
 
+from google.adk.agents import SequentialAgent, ParallelAgent, Agent
+
+# Import all partial agents
+from agents.location_finder.agent import (
+    trip_input_agent,
+    location_finder_agent,
+    destination_rater_agent
+)
+
+from agents.flight_finder.agent import flight_search_agent
+from agents.hotel_finder.agent import hotel_search_agent
+from agents.itinerary_generator.agent import itinerary_agent
+
+
+# Supervisor agent
+# from agents.main_agent.supervisor import supervisor_agent   # when we create one
+
+
+supervisor_instructions = """
+You are the supervisor agent.
+
+Your job:
+- Read `destination_rating_results`.
+- If at least 1 preferred destination exists:
+    Output {"should_search": true}
+- Otherwise:
+    Output {"should_search": false}
+"""
+
+supervisor_agent = Agent(
+    name="supervisor_agent",
+    model="gemini-2.0-flash",
+    instruction=supervisor_instructions,
+    output_key="search_trigger"
+)
+
+
+
+
+# Parallel agent
+flight_and_hotel_parallel = ParallelAgent(
+    name="flight_and_hotel_parallel",
+    sub_agents=[flight_search_agent, hotel_search_agent]
+)
+
+# Final root agent
+root_agent = SequentialAgent(
+    name="location_finder_root_agent",
+    sub_agents=[
+        trip_input_agent,
+        location_finder_agent,
+        destination_rater_agent,
+        supervisor_agent,
+        flight_and_hotel_parallel,
+        itinerary_agent
+    ]
+)

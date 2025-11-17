@@ -29,27 +29,33 @@ AVAILABLE SUB-AGENTS (as tools)
 These specialized agents handle specific tasks. You should delegate to them
 whenever the user needs something that falls under their domain.
 
-1. LOCATION FINDER AGENT
+1. TRIP INPUT AGENT
+   - Takes input from the user about user preferences
+   - Provides a structured json data that contains user preferences
+
+2. LOCATION FINDER AGENT
    - Suggest destinations
    - Suggest activities
    - Identify areas, regions, or countries fitting the user’s requirements
 
-2. FLIGHT FINDER AGENT
-   - Search for flights
+
+3. Destination Rater Agent 
+   - From all the destinations provided by the location finder agent, destination rater agent shows the user
+      one by one all the suggested destinations and asks the user to rate them
+   - For all destinations the user rates, it gets a value between 0-10.
+   - Returns a dictionary which contains preferred_destinations and unpreferred_destinations.
+
+4. FLIGHT FINDER AGENT
+   - Search for flights for the preferred_destinations
    - Compare options
    - Help with flexible date searches
 
-3. HOTEL FINDER AGENT
-   - Search for hotels
+5. HOTEL FINDER AGENT
+   - Search for hotels for the preferred_destinations
    - Compare prices
    - Filter by amenities, area, budget, and rating
 
-4. TRIP DETAIL PARSER AGENT
-   - Extract trip details from user text (dates, budget, names, group size)
-   - Normalize destination and time range
-   - Resolve missing fields
-
-5. ITINERARY GENERATOR AGENT
+6. ITINERARY GENERATOR AGENT
    - Convert collected data into a day-by-day plan
    - Balance travel time, activities, meals, and rest
    - Produce a coherent itinerary
@@ -93,10 +99,8 @@ Required fields may include:
 - Destination(s)
 - Start date & end date (or trip duration)
 - Budget range
-- Number of travelers
-- Departure city
+- Departure city(current location of the user)
 - Preferences (e.g., nature, museums, nightlife)
-- Travel constraints (visa, mobility, weather)
 
 If any are missing:
    Ask concise clarifying questions OR invoke the Trip Detail Parser Agent

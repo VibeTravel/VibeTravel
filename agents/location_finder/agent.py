@@ -1,13 +1,28 @@
-from google.adk.agents import Agent, SequentialAgent
-# from google.adk.utils import load_instruction_from_file
+# from google.adk.agents import Agent, SequentialAgent
+# # from google.adk.utils import load_instruction_from_file
 # from google.adk.models.lite_llm import LiteLlm
+# from agents.utils.instructions_loader import load_instruction_from_file
+# from dotenv import load_dotenv
+# from google.adk.tools import google_search
+# load_dotenv()
+
+
+
+
+from google.adk.agents import Agent, SequentialAgent
+from google.adk.models.lite_llm import LiteLlm
 from agents.utils.instructions_loader import load_instruction_from_file
-from dotenv import load_dotenv
 from google.adk.tools import google_search
+from dotenv import load_dotenv
+
 load_dotenv()
 # MODEL
-# model = LiteLlm(model="openai/gpt-4o-mini")
-model='gemini-2.5-flash'
+# model = LiteLlm(
+#     model="openai/gpt-4o-mini",
+#     drop_params=True  # VERY IMPORTANT for OpenAI
+# )
+# model='gemini-1.5-flash'
+model = 'gemini-2.0-flash'
 # LOAD INSTRUCTIONS
 trip_input_instructions = load_instruction_from_file(
     "trip_input.txt"
@@ -40,7 +55,7 @@ rating_instructions = load_instruction_from_file("destination_rating.txt")
 
 destination_rater_agent = Agent(
     name="destination_rater_agent",
-    model="gemini-2.5-flash",
+    model=model,
     instruction=rating_instructions,
     description="Shows destinations one-by-one, asks user for ratings, and classifies into preferred/unpreferred lists.",
     output_key="destination_rating_results"

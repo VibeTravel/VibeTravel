@@ -65,6 +65,7 @@ OUTPUT FORMAT (STRICT):
         ]
         }
 
-Do not add extra text outside this JSON.
+Do not add extra text outside this JSON. The URL is completely optional. However, there MUST NOT be made up URLs. AVOID USING MADEUP URLs. IF THERE 
+ARE NO URLS FOR THE IMAGES, JUST DONT USE IT.
 
 END OF INSTRUCTIONS.
