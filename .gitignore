@@ -1,0 +1,38 @@
+# ===========================
+# PYTHON
+# ===========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+app/                # ← your venv folder
+
+# ===========================
+# ENVIRONMENT FILES
+# ===========================
+.env
+*.env
+*/.env              # catch .env in subfolders too
+
+# ===========================
+# NODE
+# ===========================
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+frontend/dist/
+frontend/build/
+
+# ===========================
+# OS / EDITOR JUNK
+# ===========================
+.DS_Store
