@@ -1,1 +1,6 @@
 google-search-results
+fpdf2
+airportsdata
+httpx
+openai
+geopy

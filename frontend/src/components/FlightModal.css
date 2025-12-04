@@ -1,0 +1,387 @@
+.flight-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1000;
+}
+
+.flight-modal {
+  width: min(900px, 100%);
+  max-height: 90vh;
+  background: #f8fafc;
+  border-radius: 18px;
+  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.flight-modal__header {
+  padding: 24px 28px 12px;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  color: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.flight-modal__header h2 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: 0.4px;
+}
+
+.flight-modal__header p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.flight-modal__close {
+  background: rgba(15, 23, 42, 0.2);
+  color: #f8fafc;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 22px;
+  line-height: 32px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.flight-modal__close:hover {
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.flight-modal__form {
+  padding: 18px 28px 12px;
+  background: rgba(226, 232, 240, 0.3);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.flight-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+
+.flight-modal__grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.flight-modal__grid input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  transition: border 0.2s ease;
+}
+
+.flight-modal__grid input:focus {
+  outline: none;
+  border-color: rgba(56, 189, 248, 0.8);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+
+.flight-modal__submit {
+  justify-self: flex-end;
+  margin-top: 8px;
+}
+
+.flight-modal__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.flight-modal__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: #334155;
+}
+
+.flight-modal__legs {
+  display: grid;
+  gap: 24px;
+}
+
+@media (min-width: 820px) {
+  .flight-modal__legs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+  }
+}
+
+.flight-modal__leg {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(241, 245, 249, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.flight-modal__leg h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #1e293b;
+}
+
+.flight-dropdown {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.flight-dropdown__toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: white;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+
+.flight-dropdown__toggle:hover {
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.flight-dropdown__toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: none;
+}
+
+.flight-dropdown__caret {
+  font-size: 12px;
+  color: #475569;
+}
+
+.flight-dropdown__menu {
+  position: relative;
+  display: grid;
+  gap: 10px;
+}
+
+.flight-dropdown__option {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  cursor: pointer;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.flight-dropdown__option:hover {
+  border-color: rgba(59, 130, 246, 0.8);
+  box-shadow: 0 16px 28px rgba(37, 99, 235, 0.18);
+}
+
+.flight-dropdown__option-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.flight-dropdown__airline {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.flight-dropdown__price {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.flight-dropdown__price--over {
+  color: #b91c1c;
+}
+
+.flight-dropdown__option-meta {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.flight-dropdown__change {
+  align-self: flex-start;
+  border: none;
+  background: none;
+  color: #2563eb;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.flight-dropdown__change:hover {
+  text-decoration: underline;
+}
+
+.flight-modal__candidates {
+  background: rgba(226, 232, 240, 0.45);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.flight-modal__candidates h3,
+.flight-modal__candidates h4 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: #1e3a8a;
+}
+
+.flight-modal__candidates ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: #334155;
+}
+
+.flight-modal__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.modal-primary-btn,
+.modal-secondary-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-primary-btn {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.35);
+}
+
+.modal-primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(37, 99, 235, 0.4);
+}
+
+.modal-primary-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.modal-secondary-btn {
+  background: rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+}
+
+.modal-secondary-btn:hover {
+  background: rgba(15, 23, 42, 0.12);
+}
+
+.flight-modal__placeholder {
+  padding: 40px 0;
+  text-align: center;
+  color: #475569;
+  font-size: 15px;
+}
+
+.flight-modal__alert {
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 14px;
+}
+
+.flight-modal__alert--error {
+  background: rgba(248, 113, 113, 0.2);
+  color: #b91c1c;
+}
+
+.flight-modal__alert--warning {
+  background: rgba(252, 211, 77, 0.25);
+  color: #92400e;
+}
+
+.flight-modal__alert--note {
+  background: rgba(56, 189, 248, 0.2);
+  color: #0c4a6e;
+}
+
+.flight-modal__alert--success {
+  background: rgba(134, 239, 172, 0.28);
+  color: #047857;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.flight-modal__footer {
+  padding: 0 28px 24px;
+}
+
+.flight-modal__footer a {
+  color: #0369a1;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.flight-modal__footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 720px) {
+  .flight-modal {
+    max-height: 95vh;
+  }
+
+  .flight-modal__card footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .modal-primary-btn,
+  .modal-secondary-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
