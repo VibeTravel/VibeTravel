@@ -160,3 +160,4 @@ body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+/* Removed flight tester layout styles */

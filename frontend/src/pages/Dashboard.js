@@ -258,25 +258,52 @@
 
 import React, { useState } from 'react';
 import DestinationRating from './DestinationRating';
-import './Dashboard.css'; // We'll create this
+import FlightModal from '../components/FlightModal';
+import Itinerary from './Itinerary';
+import './Dashboard.css';
 
-function Dashboard({ destinations, onBack }) {
+function Dashboard({ destinations, onBack, tripDetails }) {
   const [activeTab, setActiveTab] = useState('suggestions');
   const [allRatings, setAllRatings] = useState([]);
+  const [selectedDestination, setSelectedDestination] = useState(null);
+  const [isFlightModalOpen, setIsFlightModalOpen] = useState(false);
+  const [savedItineraries, setSavedItineraries] = useState([]);
 
   const handleRatingStored = (rating) => {
     setAllRatings(prev => [...prev, rating]);
   };
 
-  // Sort preferred destinations by rating (highest first)
   const preferredDestinations = allRatings
     .filter(r => r.rating >= 5)
     .sort((a, b) => b.rating - a.rating);
 
-  const handleDestinationClick = (destination) => {
-    console.log('Clicked destination:', destination);
-    // TODO: Navigate to itinerary page for this destination
-    alert(`Generating itinerary for ${destination.destination}...\n\nItinerary generation coming soon!`);
+  const handleGenerateFlights = (event, destination) => {
+    event.stopPropagation();
+
+    if (!tripDetails) {
+      alert('Trip details not available. Please run the Phase 1 search again.');
+      return;
+    }
+
+    if (!tripDetails.budget) {
+      alert('Please specify a budget in the Phase 1 form before generating flights.');
+      return;
+    }
+
+    setSelectedDestination(destination);
+    setIsFlightModalOpen(true);
+  };
+
+  const closeFlightModal = () => {
+    setIsFlightModalOpen(false);
+    setSelectedDestination(null);
+  };
+
+  const handleItinerarySaved = (entry) => {
+    setSavedItineraries((prev) => [...prev, entry]);
+    setIsFlightModalOpen(false);
+    setSelectedDestination(null);
+    setActiveTab('itinerary');
   };
 
   return (
@@ -309,6 +336,15 @@ function Dashboard({ destinations, onBack }) {
         >
           Start Planning
         </button>
+        <button
+          style={{
+            ...styles.tab,
+            ...(activeTab === 'itinerary' ? styles.tabActive : {})
+          }}
+          onClick={() => setActiveTab('itinerary')}
+        >
+          Itinerary
+        </button>
       </div>
 
       <div style={styles.content}>
@@ -323,7 +359,7 @@ function Dashboard({ destinations, onBack }) {
         )}
 
         {activeTab === 'suggestions' && (
-          <DestinationRating 
+          <DestinationRating
             destinations={destinations}
             onRatingStored={handleRatingStored}
           />
@@ -332,12 +368,12 @@ function Dashboard({ destinations, onBack }) {
         {activeTab === 'planning' && (
           <div style={styles.section}>
             <h2 style={styles.sectionTitle}>Start Planning</h2>
-            
+
             {preferredDestinations.length === 0 ? (
               <div style={styles.emptyState}>
                 <p>No destinations rated yet!</p>
                 <p style={styles.hint}>Go to "Suggestions" and rate some destinations (5+ rating) to start planning.</p>
-                <button 
+                <button
                   style={styles.primaryButton}
                   onClick={() => setActiveTab('suggestions')}
                 >
@@ -348,17 +384,16 @@ function Dashboard({ destinations, onBack }) {
               <div>
                 <p style={styles.subtitle}>
                   You've rated {preferredDestinations.length} destination{preferredDestinations.length !== 1 ? 's' : ''} as preferred!
-                  <br/>
-                  <span style={styles.subtitleHint}>Sorted by rating (highest first) • Click any destination to view itinerary</span>
+                  <br />
+                  <span style={styles.subtitleHint}>Sorted by rating (highest first). Generate flights for any favorite below.</span>
                 </p>
-                
+
                 <div style={styles.preferredList}>
                   {preferredDestinations.map((dest, idx) => (
-                    <div 
-                      key={idx} 
+                    <div
+                      key={idx}
                       className="preferred-card-hover"
                       style={styles.preferredCard}
-                      onClick={() => handleDestinationClick(dest)}
                     >
                       <div style={styles.preferredHeader}>
                         <h3 style={styles.preferredTitle}>
@@ -369,7 +404,16 @@ function Dashboard({ destinations, onBack }) {
                         </span>
                       </div>
                       <p style={styles.preferredBudget}>{dest.estimated_budget}</p>
-                      <p style={styles.clickHint}>Click to view itinerary →</p>
+                      <div className="preferred-card-actions">
+                        <button
+                          type="button"
+                          className="generate-flight-btn"
+                          onClick={(event) => handleGenerateFlights(event, dest)}
+                        >
+                          Generate Flights
+                        </button>
+                        <span style={styles.clickHint}>Pick a flight to save as PDF</span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -377,7 +421,23 @@ function Dashboard({ destinations, onBack }) {
             )}
           </div>
         )}
+
+        {activeTab === 'itinerary' && (
+          <div style={styles.section}>
+            <Itinerary entries={savedItineraries} />
+          </div>
+        )}
       </div>
+
+      {isFlightModalOpen && (
+        <FlightModal
+          isOpen={isFlightModalOpen}
+          onClose={closeFlightModal}
+          destination={selectedDestination}
+          tripDetails={tripDetails}
+          onFlightSaved={handleItinerarySaved}
+        />
+      )}
     </div>
   );
 }
@@ -498,7 +558,6 @@ const styles = {
     background: 'rgba(255, 255, 255, 0.8)',
     borderRadius: '12px',
     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-    cursor: 'pointer',
     transition: 'all 0.3s ease',
   },
   preferredHeader: {

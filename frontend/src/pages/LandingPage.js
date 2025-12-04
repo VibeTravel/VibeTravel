@@ -6,12 +6,12 @@ function LandingPage() {
   const [showDashboard, setShowDashboard] = useState(false);
   const [destinations, setDestinations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [tripDetails, setTripDetails] = useState(null);
+
   const [location, setLocation] = useState("");
   const [activities, setActivities] = useState("");
   const [budget, setBudget] = useState("");
-  const [useDays, setUseDays] = useState(true);
-  const [numDays, setNumDays] = useState("");
+  const [travelers, setTravelers] = useState(1);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -22,10 +22,10 @@ function LandingPage() {
       location,
       activities: activities.split(",").map((a) => a.trim()),
       budget: Number(budget),
-      dateMode: useDays ? "number_of_days" : "date_range",
-      numDays: useDays ? Number(numDays) : null,
-      startDate: useDays ? null : startDate,
-      endDate: useDays ? null : endDate,
+      dateMode: "date_range",
+      numDays: null,
+      startDate,
+      endDate,
     };
 
     console.log("Sending to backend:", payload);
@@ -36,6 +36,14 @@ function LandingPage() {
       console.log("Response from backend:", result);
       
       setDestinations(result.destinations);
+      setTripDetails({
+        location,
+        activities,
+        budget: Number(budget),
+        travelers: Number(travelers) || 1,
+        startDate,
+        endDate,
+      });
       setIsLoading(false);
       setShowDashboard(true);
     } catch (err) {
@@ -67,6 +75,7 @@ function LandingPage() {
       <Dashboard 
         destinations={destinations}
         onBack={handleBackToSearch}
+        tripDetails={tripDetails}
       />
     );
   }
@@ -102,58 +111,30 @@ function LandingPage() {
             required
           />
 
-          <label>Choose date mode:</label>
-          <div className="radio-group">
-            <label>
-              <input
-                type="radio"
-                checked={useDays}
-                onChange={() => setUseDays(true)}
-              />
-              Number of Days
-            </label>
+          <label>Number of Travelers:</label>
+          <input
+            type="number"
+            min="1"
+            value={travelers}
+            onChange={(e) => setTravelers(e.target.value)}
+            required
+          />
 
-            <label>
-              <input
-                type="radio"
-                checked={!useDays}
-                onChange={() => setUseDays(false)}
-              />
-              Start & End Date
-            </label>
-          </div>
+          <label>Start Date:</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            required
+          />
 
-          {useDays && (
-            <div>
-              <label>Number of Days:</label>
-              <input
-                type="number"
-                value={numDays}
-                onChange={(e) => setNumDays(e.target.value)}
-                required
-              />
-            </div>
-          )}
-
-          {!useDays && (
-            <div>
-              <label>Start Date:</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                required
-              />
-
-              <label>End Date:</label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                required
-              />
-            </div>
-          )}
+          <label>End Date:</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            required
+          />
 
           <button type="submit" className="submit-btn">
             Search Destinations

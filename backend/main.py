@@ -6,7 +6,10 @@ load_dotenv()
 
 from routes.health import router as health_router
 from routes.phase1 import router as phase1_router
-from routes.ratings import router as ratings_router  
+from routes.ratings import router as ratings_router
+from routes.phase2 import router as phase2_router
+from routes.itineraries import router as itineraries_router
+
 
 app = FastAPI()
 
@@ -20,4 +23,6 @@ app.add_middleware(
 
 app.include_router(health_router)
 app.include_router(phase1_router)
-app.include_router(ratings_router) 
+app.include_router(phase2_router)
+app.include_router(ratings_router)
+app.include_router(itineraries_router)
