@@ -5,6 +5,9 @@ import './Dashboard.css'; // We'll create this
 function Dashboard({ destinations, onBack }) {
   const [activeTab, setActiveTab] = useState('suggestions');
   const [allRatings, setAllRatings] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedDestination, setSelectedDestination] = useState(null);
 
   const handleRatingStored = (rating) => {
     setAllRatings(prev => [...prev, rating]);
@@ -15,10 +18,37 @@ function Dashboard({ destinations, onBack }) {
     .filter(r => r.rating >= 5)
     .sort((a, b) => b.rating - a.rating);
 
-  const handleDestinationClick = (destination) => {
+  const handleDestinationClick = async (destination) => {
     console.log('Clicked destination:', destination);
-    // TODO: Navigate to itinerary page for this destination
-    alert(`Generating itinerary for ${destination.destination}...\n\nItinerary generation coming soon!`);
+    setSelectedDestination(destination);
+    setShowModal(true);
+    setIsGenerating(true);
+
+    try {
+      // TODO: Create this API call
+      // const response = await planItinerary({
+      //   destination: destination.destination,
+      //   country: destination.country,
+      //   origin: 'New York', // Get from stored search request
+      //   startDate: '2025-12-20', // Get from stored search request
+      //   endDate: '2025-12-28', // Get from stored search request
+      //   numTravelers: 2, // Get from stored search request
+      //   budget_per_person: 1000 // Get from stored search request
+      // });
+      
+      // Simulate API call for now
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      console.log('Itinerary generated!');
+      alert('Itinerary ready! (Next: Show itinerary page)');
+      
+    } catch (error) {
+      console.error('Failed to generate itinerary:', error);
+      alert('Failed to generate itinerary. Please try again.');
+    } finally {
+      setIsGenerating(false);
+      setShowModal(false);
+    }
   };
 
   return (
@@ -120,6 +150,24 @@ function Dashboard({ destinations, onBack }) {
           </div>
         )}
       </div>
+      {/* Loading Modal */}
+      {showModal && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalContent}>
+            <div style={styles.spinner}></div>
+            <h2 style={styles.modalTitle}>
+              Generating your itinerary...
+            </h2>
+            <p style={styles.modalText}>
+              Finding the best flights and hotels for<br/>
+              <strong>{selectedDestination?.destination}, {selectedDestination?.country}</strong>
+            </p>
+            <p style={styles.modalSubtext}>This may take a moment ✈️🏨</p>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 }
@@ -203,6 +251,53 @@ const styles = {
     marginTop: '10px',
     textAlign: 'center',
   },
+  modalOverlay: {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 1000,
+  backdropFilter: 'blur(8px)',
+},
+modalContent: {
+  background: 'white',
+  padding: '50px 60px',
+  borderRadius: '20px',
+  textAlign: 'center',
+  maxWidth: '500px',
+  boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+},
+spinner: {
+  width: '60px',
+  height: '60px',
+  margin: '0 auto 30px',
+  border: '6px solid #e5e7eb',
+  borderTop: '6px solid #3b82f6',
+  borderRadius: '50%',
+  animation: 'spin 1s linear infinite',
+},
+modalTitle: {
+  fontSize: '24px',
+  fontWeight: '700',
+  color: '#1e293b',
+  marginBottom: '15px',
+},
+modalText: {
+  fontSize: '16px',
+  color: '#475569',
+  lineHeight: '1.6',
+  marginBottom: '10px',
+},
+modalSubtext: {
+  fontSize: '14px',
+  color: '#94a3b8',
+  marginTop: '15px',
+},
   primaryButton: {
     padding: '14px 30px',
     background: '#3b82f6',
