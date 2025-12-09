@@ -58,50 +58,33 @@ class Phase1Supervisor:
     """
 
     def _build_trip_details(self, req) -> TripDetails:
-        """Convert API SearchRequest → TripDetails."""
-
-        # Trip duration can come in two ways
-        if req.dateMode == "number_of_days":
-            duration = TripDuration(days=req.numDays)
-        else:
-            # Compute days from date range
-            start = date.fromisoformat(req.startDate)
-            end = date.fromisoformat(req.endDate)
-            days = (end - start).days
-            duration = TripDuration(
-                days=days,
-                start_date=req.startDate,
-                end_date=req.endDate,
-            )
-
-        # TripDetails expects budget as a string like "2000 USD"
-        budget_str = f"{req.budget} USD"
+        """
+            Convert enriched SearchRequest → TripDetails.
+            Only includes fields needed by the Location Finder agent.
+            """
 
         return TripDetails(
-            user_location=req.location,
-            interests=req.activities,
-            budget=budget_str,
-            trip_duration=duration,
-            search_mode="global",  # we can add "local" later
+            location=req.location,
+            numDays=req.numDays,
+            budget_per_person=req.budget_per_person,
+            activities=req.activities,
+            additionalDetails=req.additionalDetails,
         )
 
     def _trip_details_to_prompt(self, trip: TripDetails) -> dict:
         """
-        Convert TripDetails → dict we send to the agent as JSON text.
+        Convert TripDetails → dict sent to the Location Finder agent.
 
-        This MUST match what we describe in location_finder.txt.
+        This structure will match the updated instructions in
+        location_finder.txt.
         """
-        trip_duration_days = trip.trip_duration.days
-
-        # TripDetails.budget is "5000 USD" → we pull out the numeric part
-        budget_number = float(trip.budget.split()[0])
 
         return {
-            "origin_location": trip.user_location,
-            "trip_duration_days": trip_duration_days,
-            "interests": trip.interests,
-            "budget_usd": budget_number,
-            "search_mode": trip.search_mode,
+            "origin_location": trip.location,
+            "trip_duration_days": trip.numDays,
+            "budget_per_person_usd": trip.budget_per_person,
+            "interests_of_user": trip.activities,
+            "additional_details": trip.additionalDetails or [],
         }
 
     async def run(self, req) -> Dict[str, Any]:
