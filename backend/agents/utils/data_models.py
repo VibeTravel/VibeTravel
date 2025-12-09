@@ -19,24 +19,26 @@ class TripDuration(BaseModel):
     )
 
 class TripDetails(BaseModel):
-    """The complete set of validated user trip requirements."""
-    user_location: str = Field(..., description="User's current or starting location.")
+    """
+    Slimmed-down trip details for the Location Finder agent.
 
-    interests: List[str] = Field(
+    This is built from SearchRequest and contains only the fields
+    the agent actually needs.
+    """
+    location: str = Field(..., description="User's starting location.")
+    numDays: int = Field(..., description="Number of effective trip days (excluding flight days).")
+    budget_per_person: float = Field(
+        ...,
+        description="Effective budget per traveler in USD."
+    )
+    activities: List[str] = Field(
         ...,
         min_length=1,
-        description="List of preferred activities or travel themes (must contain at least one item)."
+        description="Preferred activities or interests."
     )
-
-    budget: str = Field(
-        ...,
-        description="User's total budget (e.g., '5000 USD' or 'mid-range')."
-    )
-
-    trip_duration: TripDuration
-    search_mode: Optional[str] = Field(
-        "global",
-        description="Scope of search: 'local' or 'global'."
+    additionalDetails: Optional[List[str]] = Field(
+        default=None,
+        description="Optional extra constraints or preferences."
     )
 
 
