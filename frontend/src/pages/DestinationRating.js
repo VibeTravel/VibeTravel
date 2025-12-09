@@ -76,18 +76,24 @@ function DestinationRating({ destinations, onRatingStored }) {
         opacity: isAnimating ? 0 : 1,
       }}>
         <div style={styles.imageContainer}>
-          <img 
-            src={currentDestination.image_url} 
-            alt={currentDestination.destination}
-            style={styles.image}
-          />
-          <div style={styles.overlay}>
-            <h1 style={styles.destinationTitle}>
-              {currentDestination.destination}
-            </h1>
-            <p style={styles.country}>{currentDestination.country}</p>
-          </div>
+  {currentDestination.image_url ? (
+    <img 
+      src={currentDestination.image_url} 
+      alt={currentDestination.destination}
+      style={styles.image}
+    />
+  ) : (
+        <div style={styles.placeholderImage}>
+          <span style={styles.placeholderIcon}>📍</span>
         </div>
+      )}
+      <div style={styles.overlay}>
+        <h1 style={styles.destinationTitle}>
+          {currentDestination.destination}
+        </h1>
+        <p style={styles.country}>{currentDestination.country}</p>
+      </div>
+    </div>
 
         <div style={styles.content}>
           <div style={styles.section}>
@@ -96,7 +102,7 @@ function DestinationRating({ destinations, onRatingStored }) {
           </div>
 
           <div style={styles.section}>
-            <h3 style={styles.sectionTitle}>Budget</h3>
+            <h3 style={styles.sectionTitle}>Budget (Excluding Flights)</h3>
             <p style={styles.budget}>{currentDestination.estimated_budget}</p>
           </div>
 
@@ -189,6 +195,18 @@ const styles = {
     height: '100%',
     objectFit: 'cover',
   },
+  placeholderImage: {
+  width: '100%',
+  height: '100%',
+  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+placeholderIcon: {
+  fontSize: '80px',
+  opacity: 0.7,
+},
   overlay: {
     position: 'absolute',
     bottom: 0,
