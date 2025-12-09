@@ -54,27 +54,6 @@ def search_flights(
     search = GoogleSearch(params)
     return search.get_dict()
 
-### Get the top N best flights using GPT
-# def get_all_flights(results: dict, n: int = 2) -> list[dict]:
-#     """Use GPT to analyze flights and pick the top n in ranked order (best first)."""
-#     flights = results.get("best_flights", []) + results.get("other_flights", [])
-#     if not flights:
-#         return []
-    
-#     # Simplify flight data for GPT
-#     simplified = []
-#     for i, f in enumerate(flights[:max(10, n)]):  # Limit to 10 or n, whichever is greater
-#         legs = f.get("flights", [])
-#         simplified.append({
-#             "index": i,
-#             "price": f.get("price"),
-#             "total_duration": f.get("total_duration"),
-#             "stops": len(legs) - 1,
-#             "airlines": [leg.get("airline") for leg in legs],
-#             "route": " → ".join([legs[0].get("departure_airport", {}).get("id")] + 
-#                                [leg.get("arrival_airport", {}).get("id") for leg in legs])
-#         })
-#     return simplified
     
 ### Fallback for flight scraping
 def fallback_scraper(

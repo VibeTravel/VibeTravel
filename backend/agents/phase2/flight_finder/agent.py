@@ -50,8 +50,8 @@ bestflight_agent = Agent(
 
 
 # Create the Flight Finder Agent
-root_agent = Agent(
-    name="root_agent",
+flight_agent = Agent(
+    name="flight_agent",
     model="gemini-2.0-flash",
     instruction=flight_finder_instructions,
     description="Finds the best roundtrip flights between cities using airport lookup, flight search, and intelligent selection.",
