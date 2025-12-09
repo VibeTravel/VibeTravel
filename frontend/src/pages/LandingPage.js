@@ -6,26 +6,36 @@ function LandingPage() {
   const [showDashboard, setShowDashboard] = useState(false);
   const [destinations, setDestinations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [tripDetails, setTripDetails] = useState(null);
+
+  // Form states
   const [location, setLocation] = useState("");
+  const [numTravelers, setNumTravelers] = useState("");
   const [activities, setActivities] = useState("");
   const [budget, setBudget] = useState("");
-  const [useDays, setUseDays] = useState(true);
-  const [numDays, setNumDays] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [additionalDetails, setAdditionalDetails] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const payload = {
       location,
-      activities: activities.split(",").map((a) => a.trim()),
+      numTravelers: Number(numTravelers),
+      activities: activities
+        .split(",")
+        .map((a) => a.trim())
+        .filter((a) => a),
       budget: Number(budget),
-      dateMode: useDays ? "number_of_days" : "date_range",
-      numDays: useDays ? Number(numDays) : null,
-      startDate: useDays ? null : startDate,
-      endDate: useDays ? null : endDate,
+      dateMode: "date_range",
+      numDays: null,
+      startDate,
+      endDate,
+      additionalDetails: additionalDetails
+        .split(",")
+        .map((d) => d.trim())
+        .filter((d) => d),
     };
 
     console.log("Sending to backend:", payload);
@@ -34,8 +44,19 @@ function LandingPage() {
     try {
       const result = await searchLocations(payload);
       console.log("Response from backend:", result);
-      
+
       setDestinations(result.destinations);
+
+      setTripDetails({
+        location,
+        activities,
+        budget: Number(budget),
+        travelers: Number(numTravelers),
+        startDate,
+        endDate,
+        additionalDetails,
+      });
+
       setIsLoading(false);
       setShowDashboard(true);
     } catch (err) {
@@ -47,7 +68,6 @@ function LandingPage() {
 
   const handleBackToSearch = () => {
     setShowDashboard(false);
-    // Optionally clear form or keep values
   };
 
   if (isLoading) {
@@ -64,9 +84,10 @@ function LandingPage() {
 
   if (showDashboard) {
     return (
-      <Dashboard 
+      <Dashboard
         destinations={destinations}
         onBack={handleBackToSearch}
+        tripDetails={tripDetails}
       />
     );
   }
@@ -85,6 +106,42 @@ function LandingPage() {
             required
           />
 
+          <label>Number of Travelers:</label>
+          <input
+            type="number"
+            min="1"
+            value={numTravelers}
+            onChange={(e) => setNumTravelers(e.target.value)}
+            required
+          />
+
+          <label>Total Budget (USD):</label>
+          <input
+            type="number"
+            min="0"
+            value={budget}
+            onChange={(e) => setBudget(e.target.value)}
+            required
+          />
+
+          <label>Start Date:</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            min={new Date().toISOString().split("T")[0]}
+            required
+          />
+
+          <label>End Date:</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            min={startDate || new Date().toISOString().split("T")[0]}
+            required
+          />
+
           <label>Preferred Activities (comma separated):</label>
           <input
             type="text"
@@ -94,66 +151,13 @@ function LandingPage() {
             required
           />
 
-          <label>Budget (USD):</label>
-          <input
-            type="number"
-            value={budget}
-            onChange={(e) => setBudget(e.target.value)}
-            required
+          <label>Additional Details or Restrictions (comma separated, optional):</label>
+          <textarea
+            value={additionalDetails}
+            onChange={(e) => setAdditionalDetails(e.target.value)}
+            placeholder="e.g., vegetarian food, pet-friendly hotels"
+            rows="3"
           />
-
-          <label>Choose date mode:</label>
-          <div className="radio-group">
-            <label>
-              <input
-                type="radio"
-                checked={useDays}
-                onChange={() => setUseDays(true)}
-              />
-              Number of Days
-            </label>
-
-            <label>
-              <input
-                type="radio"
-                checked={!useDays}
-                onChange={() => setUseDays(false)}
-              />
-              Start & End Date
-            </label>
-          </div>
-
-          {useDays && (
-            <div>
-              <label>Number of Days:</label>
-              <input
-                type="number"
-                value={numDays}
-                onChange={(e) => setNumDays(e.target.value)}
-                required
-              />
-            </div>
-          )}
-
-          {!useDays && (
-            <div>
-              <label>Start Date:</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                required
-              />
-
-              <label>End Date:</label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                required
-              />
-            </div>
-          )}
 
           <button type="submit" className="submit-btn">
             Search Destinations
