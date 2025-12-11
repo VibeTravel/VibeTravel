@@ -13,22 +13,24 @@ from agents.utils.instructions_loader import load_instruction_from_file
 
 bestflight_agent = Agent(
     name="bestflight_agent",
-    model="gemini-2.5-pro",
+    model="gemini-2.5-flash",
     instruction=load_instruction_from_file(
-        "best_flight_agent_instructions.txt"
+        "best_flight_agent_instructions.txt",
+        relative_to_caller=True
     ),
     description="Finds the best roundtrip flights between cities using airport lookup, flight search, and intelligent selection.",
 )
 
 
 flight_hotel_finder_instructions = load_instruction_from_file(
-    "flight_hotel_finder_agent_instructions.txt"
+    "flight_finder_instructions.txt",
+    relative_to_caller=True
 )
 
 # Create the Flight Finder Agent
 flight_hotel_finder_agent = Agent(
     name="flight_hotel_finder_agent",
-    model="gemini-2.5-pro",
+    model="gemini-2.5-flash",
     instruction=flight_hotel_finder_instructions,
     description="Finds the best roundtrip flights between cities using airport lookup, flight search, and intelligent selection and also provides appropriate hotel choices for the duration of stay.",
     tools=[
