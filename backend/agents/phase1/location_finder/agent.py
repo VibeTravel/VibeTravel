@@ -17,5 +17,5 @@ location_finder_agent = Agent(
     description="Searches the web and proposes travel destinations based on trip details.",
     # output_schema=PreliminarySuggestions,
     output_key="preliminary_location_suggestions",
-    tools=[google_search],  # ← Add this back
+    tools=[],  # ← Temporarily disabled google_search to avoid rate limits
 )

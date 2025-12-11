@@ -351,6 +351,7 @@ class Phase2Supervisor:
             print(f"  Activities: {len(activities)}")
             print(f"  Outbound flights: {len(outbound)}")
             print(f"  Return flights: {len(returns)}")
+            print(f"  Raw flights_and_hotels structure: {json.dumps(fh, indent=2)[:500]}...")
             
             # ========================================
             # Map orchestrator_data to Phase2Response models
@@ -404,8 +405,11 @@ class Phase2Supervisor:
             # Parse Hotels
             try:
                 fh_data = orchestrator_data.get("flights_and_hotels", {})
+                print(f"\n[DEBUG] flights_and_hotels keys: {fh_data.keys()}")
                 hotel_1 = fh_data.get("hotel_options_flight_1", {})
                 hotel_2 = fh_data.get("hotel_options_flight_2", {})
+                print(f"[DEBUG] hotel_1: {hotel_1}")
+                print(f"[DEBUG] hotel_2: {hotel_2}")
                 
                 if hotel_1 or hotel_2:
                     # Helper to process hotel list and fix price format
