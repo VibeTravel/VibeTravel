@@ -3,7 +3,7 @@ from google.adk.tools import google_search  # ← Add this back
 
 from agents.utils.instructions_loader import load_instruction_from_file
 
-MODEL_NAME = "gemini-2.5-flash"  # ← Keep this model
+MODEL_NAME = "gemini-2.5-flash"
 
 location_finder_instructions = load_instruction_from_file(
     "location_finder.txt",

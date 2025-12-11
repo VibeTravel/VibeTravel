@@ -8,6 +8,7 @@ from openai import OpenAI
 from serpapi import GoogleSearch
 from google.adk.agents import Agent
 from google.adk.tools import FunctionTool
+from concurrent.futures import ThreadPoolExecutor
 # Load environment variables
 load_dotenv()
 
@@ -179,7 +180,7 @@ def parse_flight_option(flight_data, booking_url):
 
 
 def scrape_hotels(city: str, check_in: str, check_out: str, adults: int = 2, currency: str = "USD") -> Dict[str, Any]:
-    """Simple hotel scraper wrapper using SerpAPI Google Hotels.
+    """Parallel hotel scraper using SerpAPI Google Hotels - 3x faster!
 
     Returns a dict with consistent category keys:
       - 'cheapest'
@@ -187,8 +188,9 @@ def scrape_hotels(city: str, check_in: str, check_out: str, adults: int = 2, cur
       - 'most_expensive'
 
     The values are the raw SerpAPI result dictionaries for each sort order.
+    Runs all 3 searches in parallel using ThreadPoolExecutor.
     """
-    params = {
+    params_base = {
         "engine": "google_hotels",
         "q": city,
         "check_in_date": check_in,
@@ -197,33 +199,30 @@ def scrape_hotels(city: str, check_in: str, check_out: str, adults: int = 2, cur
         "currency": currency,
         "api_key": SERPAPI_API_KEY
     }
-
-    # Cheapest (sort_by=3)
-    params_cheapest = params.copy()
-    params_cheapest["sort_by"] = 3
-    search_cheapest = GoogleSearch(params_cheapest)
-    results_cheapest = search_cheapest.get_dict()
-
-    # Highest rated (sort_by=8)
-    params_rated = params.copy()
-    params_rated["sort_by"] = 8
-    search_rated = GoogleSearch(params_rated)
-    results_rated = search_rated.get_dict()
-
-    # Most expensive (sort_by=13)
-    params_expensive = params.copy()
-    params_expensive["sort_by"] = 13
-    search_expensive = GoogleSearch(params_expensive)
-    results_expensive = search_expensive.get_dict()
-
-    cheapest = return_top_hotels(results_cheapest, label="cheapest")
-    highest_rated = return_top_hotels(results_rated, label="highest rated")
-    most_expensive = return_top_hotels(results_expensive, label="most expensive")
-
+    
+    def fetch_hotels(sort_by: int, label: str):
+        """Helper function to fetch hotels for a specific sort order"""
+        params = params_base.copy()
+        params["sort_by"] = sort_by
+        search = GoogleSearch(params)
+        results = search.get_dict()
+        hotels = return_top_hotels(results, label=label)
+        return (label, hotels)
+    
+    # Run all 3 searches in parallel (3x faster than sequential!)
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = [
+            executor.submit(fetch_hotels, 3, "cheapest"),
+            executor.submit(fetch_hotels, 8, "highest rated"),
+            executor.submit(fetch_hotels, 13, "most expensive")
+        ]
+        results = [f.result() for f in futures]
+    
+    # Convert results list to dict
     return {
-        "cheapest": cheapest,
-        "highest_rated": highest_rated,
-        "most_expensive": most_expensive
+        "cheapest": results[0][1],
+        "highest_rated": results[1][1],
+        "most_expensive": results[2][1]
     }
 
 def return_top_hotels(results, label="", top_n=2):
