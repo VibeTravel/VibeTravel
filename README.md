@@ -14,7 +14,7 @@ pip install fastapi
 pip install uvicorn
 
 
-uvicorn main:app --reload
+uvicorn main:app --reload --port 8000
 
 
 put a .env file inside the backend

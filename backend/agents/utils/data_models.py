@@ -1,7 +1,11 @@
 # agents/utils/data_models.py
 
 from pydantic import BaseModel, Field, PositiveInt
-from typing import Optional, List, Any
+from typing import Optional, List, Any, Dict
+
+# ========================================
+# Phase 1 - Location Search Models
+# ========================================
 
 class TripDuration(BaseModel):
     """Defines trip length, using either days or dates."""
@@ -18,10 +22,10 @@ class TripDuration(BaseModel):
         description="End date (YYYY-MM-DD format)."
     )
 
+
 class TripDetails(BaseModel):
     """
     Slimmed-down trip details for the Location Finder agent.
-
     This is built from SearchRequest and contains only the fields
     the agent actually needs.
     """
@@ -42,7 +46,6 @@ class TripDetails(BaseModel):
     )
 
 
-    # utils/data_models.py (Snippet)
 class LocationSuggestion(BaseModel):
     """Details for a single preliminary location suggestion."""
     destination: str
@@ -52,13 +55,14 @@ class LocationSuggestion(BaseModel):
     image_url: Optional[str] = Field(None, description="A direct link to an image of the destination.")
     estimated_budget: str = Field(..., description="Estimated cost range for a trip to this location.")
 
+
 class PreliminarySuggestions(BaseModel):
     """The list outputted by the Location Finder Agent."""
     preliminary_location_suggestions: List[LocationSuggestion] = Field(..., min_length=10)
 
 
 # ========================================
-# Phase 2 - Itinerary Planning Models
+# Phase 2 - Request Models (Input)
 # ========================================
 
 class SelectedDestination(BaseModel):
@@ -76,14 +80,13 @@ class SelectedDestination(BaseModel):
     estimated_budget: str = Field(..., description="Budget estimate from Phase 1")
 
 
-class UserTripContext(BaseModel):
+class TripContext(BaseModel):
     """
     Original trip context from the user's initial search.
     This is retrieved from LAST_SEARCH_REQUEST in Phase 1.
     """
     origin_location: str = Field(..., description="User's starting/current location")
     numTravelers: int = Field(..., description="Number of travelers", ge=1)
-    total_budget: float = Field(..., description="Total budget for the entire trip in USD")
     budget_per_person: float = Field(..., description="Budget per person in USD")
     startDate: str = Field(..., description="Trip start date (YYYY-MM-DD)")
     endDate: str = Field(..., description="Trip end date (YYYY-MM-DD)")
@@ -99,18 +102,15 @@ class Phase2PlanningRequest(BaseModel):
     Complete request for Phase 2 itinerary planning.
     Combines selected destination info with original trip context.
     """
-    # Selected destination from Phase 1
     selected_destination: SelectedDestination
-    
-    # Original trip context
-    trip_context: UserTripContext
+    trip_context: TripContext
 
 
+# ========================================
+# Phase 2 - Activity Models
+# ========================================
 
-# In data_models.py
-
-# Activity Models
-class ActivityDetail(BaseModel):
+class Activity(BaseModel):
     """Individual activity with pricing and duration"""
     name: str
     description: str
@@ -118,75 +118,100 @@ class ActivityDetail(BaseModel):
     estimated_cost_per_person: float  # in USD
     category: str  # e.g., "museum", "hiking", "cultural"
     
+
 class ActivitySearchResults(BaseModel):
-    """Results from Activity Planner Agent"""
-    destination: str
-    activities: List[ActivityDetail]
+    """Results from Activity Finder Agent"""
+    destination: str  # "City, Country"
+    activities: List[Activity]
 
 
-# Flight Models
+# ========================================
+# Phase 2 - Flight Models
+# ========================================
+
 class FlightOption(BaseModel):
     """Single flight option"""
     airline: str
-    departure_time: str
-    arrival_time: str
-    departure_date: str
-    arrival_date: str  # Important: could be same or next day
-    duration: str
-    price_per_person: float
-    total_price: float  # price * numTravelers
+    airplane: str
+    departure_airport_name: str
+    departure_airport_code: str
+    departure_time: str  # "YYYY-MM-DD HH:MM"
+    arrival_airport_name: str
+    arrival_airport_code: str
+    arrival_time: str    # "YYYY-MM-DD HH:MM"
+    total_duration_minutes: int
     stops: int
-    departure_airport: str
-    arrival_airport: str
-    booking_url: Optional[str] = None
+    price_usd: float
+    booking_url: str
+    
+    @property
+    def total_price(self) -> float:
+        """Alias for price_usd for consistency"""
+        return self.price_usd
+
 
 class FlightRecommendations(BaseModel):
-    """4 flight options: 2 outbound, 2 return"""
-    outbound_flights: List[FlightOption] = Field(..., min_length=2, max_length=2)
-    return_flights: List[FlightOption] = Field(..., min_length=2, max_length=2)
-    # origin_airport_code: str
-    # destination_airport_code: str
+    """Roundtrip flight options"""
+    outbound_flights: List[FlightOption]  # Top 2 outbound
+    return_flights: List[FlightOption]    # Top 2 return
 
 
-# Hotel Models
+# ========================================
+# Phase 2 - Hotel Models
+# ========================================
+
 class HotelOption(BaseModel):
-    """Single hotel recommendation"""
+    """Single hotel option"""
     name: str
+    price: float
     rating: float
-    price_per_night: float
-    total_price: float  # for entire stay
-    location: str
-    amenities: List[str]
-    room_type: str
-    max_occupancy: int
-    booking_url: Optional[str] = None
+    reviews: int
+    link: str
+    
+    @property
+    def total_price(self) -> float:
+        """Alias for price for consistency"""
+        return self.price
 
-class HotelScenario(BaseModel):
-    """Hotel options for a specific check-in date"""
-    check_in_date: str  # "YYYY-MM-DD"
-    check_out_date: str
-    num_nights: int
-    hotels: List[HotelOption] = Field(..., min_length=4, max_length=4)
+
+class HotelCategory(BaseModel):
+    """Hotels organized by category"""
+    hotels: List[HotelOption]
+    category: str  # "cheapest", "highest_rated", "most_expensive", etc.
+
 
 class HotelRecommendations(BaseModel):
-    """Hotel options for both landing date scenarios"""
-    scenario_A: HotelScenario  # Land on departure date
-    scenario_B: HotelScenario  # Land next day
-
-
-# Phase 2 Complete Response
-class Phase2Response(BaseModel):
-    """Complete response from Phase 2 with all agent results"""
-    status: str  # "success", "partial", "error"
+    """
+    Hotel options for both flight scenarios.
     
-    # Results from parallel agents
+    scenario_A: Hotels for first outbound flight's arrival date
+    scenario_B: Hotels for second outbound flight's arrival date
+    """
+    scenario_A: HotelCategory  # For outbound flight 1
+    scenario_B: HotelCategory  # For outbound flight 2
+
+
+# ========================================
+# Phase 2 - Response Model (Output)
+# ========================================
+
+class Phase2Response(BaseModel):
+    """
+    Complete Phase 2 response to frontend.
+    
+    Contains:
+    - status: "success", "partial", or "error"
+    - activities: Activities at destination (if found)
+    - flights: Roundtrip flight options (if found)
+    - hotels: Hotel options for both scenarios (if found)
+    - estimated_total_cost: Rough cost estimate
+    - errors: List of error messages
+    - warnings: List of warning messages
+    """
+    status: str  # "success" | "partial" | "error"
     activities: Optional[ActivitySearchResults] = None
     flights: Optional[FlightRecommendations] = None
     hotels: Optional[HotelRecommendations] = None
-    
-    # Pricing summary
     estimated_total_cost: Optional[float] = None
-    
-    # Error handling
-    errors: List[str] = Field(default=[])
-    warnings: List[str] = Field(default=[])
+    errors: List[str] = Field(default_factory=list)
+    warnings: List[str] = Field(default_factory=list)
