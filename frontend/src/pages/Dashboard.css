@@ -8,12 +8,48 @@
 .preferred-card-hover:active {
   transform: translateY(-2px);
 }
+
+/* Spinner animation */
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-.preferred-card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+/* Hover effects for selectable cards in modal (flights/hotels) */
+/* Using inline styles but these are fallback for any CSS-based selectors */
+div[style*="selectableCard"]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.2);
+}
+
+/* Close button hover */
+button[style*="closeButton"]:hover {
+  background: rgba(100, 116, 139, 0.1);
+}
+
+/* Confirm button hover (not disabled) */
+button[style*="confirmButton"]:not(:disabled):hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+}
+
+/* Book button hover */
+a[style*="bookButton"]:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* Itinerary summary card hover */
+div[class*="itinerarySummaryCard"]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+}
+
+/* Download button hover */
+button[style*="downloadButton"]:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
 }

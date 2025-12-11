@@ -132,7 +132,7 @@ class ActivitySearchResults(BaseModel):
 class FlightOption(BaseModel):
     """Single flight option"""
     airline: str
-    airplane: str
+    airplane: Optional[str] = Field(default="N/A", description="Aircraft model (if available)")
     departure_airport_name: str
     departure_airport_code: str
     departure_time: str  # "YYYY-MM-DD HH:MM"
@@ -213,5 +213,83 @@ class Phase2Response(BaseModel):
     flights: Optional[FlightRecommendations] = None
     hotels: Optional[HotelRecommendations] = None
     estimated_total_cost: Optional[float] = None
+    errors: List[str] = Field(default_factory=list)
+    warnings: List[str] = Field(default_factory=list)
+
+
+# ========================================
+# Phase 3 - Itinerary Planner Models
+# ========================================
+
+class Phase3Input(BaseModel):
+    """
+    Input for Phase 3 Itinerary Planner Agent.
+    Contains the user's selections from Phase 2 (flights, hotel, activities) 
+    AND the complete trip context including budget.
+    """
+    # Trip context (from Phase 1/2)
+    destination: str = Field(..., description="City, Country")
+    origin_location: str = Field(..., description="User's home location")
+    trip_start_date: str = Field(..., description="Trip start date (YYYY-MM-DD)")
+    trip_end_date: str = Field(..., description="Trip end date (YYYY-MM-DD)")
+    num_travelers: int = Field(..., description="Number of travelers", ge=1)
+    num_days: int = Field(..., description="Number of days at destination (excluding flight days)", ge=1)
+    budget_per_person: float = Field(..., description="Budget per person in USD")
+    additional_details: Optional[List[str]] = Field(
+        default=[],
+        description="Additional user preferences/constraints"
+    )
+    
+    # User selections from Phase 2
+    outbound_flight: FlightOption = Field(..., description="Selected outbound flight")
+    return_flight: FlightOption = Field(..., description="Selected return flight")
+    selected_hotel: HotelOption = Field(..., description="Selected hotel")
+    selected_activities: List[Activity] = Field(..., description="Activities user wants to include")
+
+
+class DayPlan(BaseModel):
+    """Single day in the itinerary"""
+    day_number: int = Field(..., description="Day number (1, 2, 3, etc.)")
+    date: str = Field(..., description="Date (YYYY-MM-DD)")
+    title: str = Field(..., description="Title for the day (e.g., 'Arrival & Exploration')")
+    activities: List[str] = Field(..., description="List of activities for this day")
+    meals: Optional[List[str]] = Field(default=[], description="Meal suggestions")
+    notes: Optional[str] = Field(default="", description="Additional notes or tips for the day")
+
+
+class Phase3Response(BaseModel):
+    """
+    Complete Phase 3 response - the final itinerary.
+    
+    Contains:
+    - Day-by-day plan
+    - Selected flights, hotel, activities
+    - Budget breakdown
+    """
+    status: str = Field(..., description="success, partial, or error")
+    
+    # Trip summary
+    destination: str
+    dates: str = Field(..., description="e.g., 'Dec 20, 2025 - Dec 28, 2025'")
+    num_travelers: int
+    
+    # Selections
+    outbound_flight: FlightOption
+    return_flight: FlightOption
+    hotel: HotelOption
+    activities: List[Activity]
+    
+    # The itinerary
+    daily_plans: List[DayPlan] = Field(..., description="Day-by-day itinerary")
+    
+    # Budget
+    total_cost: float = Field(..., description="Total estimated cost for entire trip")
+    cost_breakdown: Dict[str, float] = Field(
+        ...,
+        description="Breakdown: flights, hotel, activities, meals, misc"
+    )
+    
+    # Metadata
+    created_at: str = Field(..., description="Timestamp when itinerary was created")
     errors: List[str] = Field(default_factory=list)
     warnings: List[str] = Field(default_factory=list)

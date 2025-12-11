@@ -11,8 +11,8 @@ export async function planItinerary(payload) {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to generate itinerary');
+    throw new Error(`Failed to plan itinerary: ${response.statusText}`);
   }
 
-  return response.json();
+  return response.json(); // convert backend JSON → JS object
 }
