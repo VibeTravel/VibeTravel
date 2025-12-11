@@ -7,11 +7,11 @@ from datetime import datetime
 
 from agents.utils.data_models import (
     SelectedDestination,
-    UserTripContext,
+    TripContext,
     Phase2PlanningRequest,
     Phase2Response  # 
 )
-# from agents.phase2.supervisor import phase2_supervisor  # We'll create this
+from agents.phase2.supervisor import phase2_supervisor
 
 router = APIRouter(prefix="/phase2", tags=["phase2"])
 
@@ -51,19 +51,9 @@ async def plan_itinerary(request: Phase2PlanningRequest) -> Phase2Response:  # â
     print(f"[Phase2] Recommended Activities: {len(request.selected_destination.recommended_activities)}")
     
     try:
-        # TODO: Call Phase 2 Supervisor
-        # result = await phase2_supervisor.run(request)
-        
-        # Placeholder response for now
-        return Phase2Response(
-            status="success",
-            activities=None,
-            flights=None,
-            hotels=None,
-            estimated_total_cost=None,
-            errors=[],
-            warnings=["Phase 2 supervisor not yet implemented - returning placeholder"]
-        )
+        # Call Phase 2 Supervisor
+        result = await phase2_supervisor.run(request)
+        return result
         
     except Exception as e:
         print(f"[Phase2] Error: {str(e)}")

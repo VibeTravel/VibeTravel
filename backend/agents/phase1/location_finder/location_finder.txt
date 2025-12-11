@@ -88,3 +88,4 @@ REMEMBER:
 - Make activities detailed and specific to the city
 - Ensure budget feasibility
 - Return ONLY the JSON object, no additional text or explanations
+- DO NOT INCLUDE ANY KINDS OF CITATION FOR WEBSITES. MAKE SURE THE CONTENT YOU RETURN IS PRESENTABLE AND ORGANIZED

@@ -68,10 +68,17 @@ async def search_locations(req: SearchRequest):
    
     # 5. Return response structure required by frontend
   
-    return {
+    response = {
         "destinations": result.get("destinations", []),
         "storedRequest": LAST_SEARCH_REQUEST
     }
+    
+    # Include error info if present (for debugging)
+    if "error" in result:
+        response["error"] = result.get("error")
+        response["source"] = result.get("source")
+    
+    return response
 
 
 @router.get("/last-search")

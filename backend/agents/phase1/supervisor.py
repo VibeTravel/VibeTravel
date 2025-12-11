@@ -157,14 +157,21 @@ class Phase1Supervisor:
             }
 
         except Exception as e:
-            print("[Phase1Supervisor] ADK failed:", e)
             import traceback
-            traceback.print_exc()
+            error_msg = str(e)
+            stack_trace = traceback.format_exc()
+            print(f"\n{'='*60}")
+            print(f"[Phase1Supervisor] ADK FAILED")
+            print(f"Error: {error_msg}")
+            print(f"Stack Trace:\n{stack_trace}")
+            print(f"Final text from agent: {final_text[:500] if 'final_text' in dir() else 'N/A'}")
+            print(f"{'='*60}\n")
 
             return {
                 "source": "adk_error",
                 "destinations": [],
-                "error": str(e),
+                "error": error_msg,
+                "stack_trace": stack_trace,
             }
 
 
