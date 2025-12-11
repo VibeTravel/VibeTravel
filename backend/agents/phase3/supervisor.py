@@ -299,4 +299,3 @@ phase3_supervisor = Phase3Supervisor()
 # In-memory storage for generated itineraries (for PDF generation)
 # Key: created_at timestamp, Value: Phase3Response
 ITINERARY_STORAGE = {}
-

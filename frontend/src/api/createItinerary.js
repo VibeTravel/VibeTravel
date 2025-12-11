@@ -16,4 +16,3 @@ export async function createItinerary(payload) {
 
   return response.json();
 }
-
