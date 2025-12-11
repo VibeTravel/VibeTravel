@@ -144,8 +144,8 @@ class FlightRecommendations(BaseModel):
     """4 flight options: 2 outbound, 2 return"""
     outbound_flights: List[FlightOption] = Field(..., min_length=2, max_length=2)
     return_flights: List[FlightOption] = Field(..., min_length=2, max_length=2)
-    origin_airport_code: str
-    destination_airport_code: str
+    # origin_airport_code: str
+    # destination_airport_code: str
 
 
 # Hotel Models
