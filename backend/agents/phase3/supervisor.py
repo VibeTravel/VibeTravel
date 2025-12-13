@@ -136,28 +136,35 @@ class Phase3Supervisor:
                 notes=""
             ))
         
-        # Calculate costs
-        flight_cost = input_data.outbound_flight.price_usd + input_data.return_flight.price_usd
-        
-        # Calculate number of nights (from check-in to check-out)
+        # Calculate costs CORRECTLY (per person vs per room)
+        # Parse dates
         start_date = datetime.strptime(input_data.trip_start_date, "%Y-%m-%d")
         end_date = datetime.strptime(input_data.trip_end_date, "%Y-%m-%d")
         num_nights = (end_date - start_date).days
         
-        hotel_cost = input_data.selected_hotel.price * num_nights
-        activities_cost = sum(act.estimated_cost_per_person for act in input_data.selected_activities)
+        # 1. FLIGHTS: Price is PER PERSON → multiply by travelers
+        flight_cost_per_person = input_data.outbound_flight.price_usd + input_data.return_flight.price_usd
+        total_flight_cost = flight_cost_per_person * input_data.num_travelers
         
-        # Estimate meals and misc (30% of activities)
-        meals_misc = activities_cost * 0.3
+        # 2. HOTEL: Price is PER NIGHT (for the room, NOT per person) → multiply by nights ONLY
+        total_hotel_cost = input_data.selected_hotel.price * num_nights
         
-        total_per_person = flight_cost + hotel_cost + activities_cost + meals_misc
-        total_cost = total_per_person * input_data.num_travelers
+        # 3. ACTIVITIES: Cost is PER PERSON → multiply by travelers
+        activities_cost_per_person = sum(act.estimated_cost_per_person for act in input_data.selected_activities)
+        total_activities_cost = activities_cost_per_person * input_data.num_travelers
+        
+        # 4. MEALS & MISC: $60 per person per day (covers 3 meals + snacks/tips) → multiply by days AND travelers
+        meals_per_person_per_day = 60.0
+        total_meals_misc = meals_per_person_per_day * input_data.num_days * input_data.num_travelers
+        
+        # TOTAL COST for entire trip
+        total_cost = total_flight_cost + total_hotel_cost + total_activities_cost + total_meals_misc
         
         cost_breakdown = {
-            "flights": flight_cost * input_data.num_travelers,
-            "hotel": hotel_cost * input_data.num_travelers,
-            "activities": activities_cost * input_data.num_travelers,
-            "meals_and_misc": meals_misc * input_data.num_travelers,
+            "flights": total_flight_cost,
+            "hotel": total_hotel_cost,
+            "activities": total_activities_cost,
+            "meals_and_misc": total_meals_misc,
         }
         
         # Format dates

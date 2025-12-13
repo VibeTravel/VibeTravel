@@ -167,6 +167,7 @@ class HotelOption(BaseModel):
     rating: float
     reviews: int
     link: str
+    category: Optional[str] = Field(None, description="Hotel category: Cheapest, Highest Rated, or Luxury")
     
     @property
     def total_price(self) -> float:
