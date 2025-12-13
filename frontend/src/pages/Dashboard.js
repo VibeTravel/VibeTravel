@@ -478,14 +478,29 @@ function Dashboard({ destinations, onBack, tripDetails }) {
                             }}
                             onClick={() => setSelectedHotel(idx)}
                           >
+                            {/* Category Badge (Cheapest, Highest Rated, Luxury) */}
+                            {hotel.category && (
+                              <div style={styles.categoryBadge}>{hotel.category}</div>
+                            )}
+                            {/* Checkmark (placed on left to avoid overlap) */}
                             {selectedHotel === idx && (
                               <div style={styles.checkmark}>✓</div>
                             )}
-                            <h4 style={styles.cardTitle}>{hotel.name}</h4>
+                            <h4 style={styles.cardTitle}>
+                              <a 
+                                href={hotel.link} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                style={styles.hotelLink}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {hotel.name}
+                              </a>
+                            </h4>
                             <div style={styles.cardDetails}>
                               <div>⭐ {hotel.rating} ({hotel.reviews} reviews)</div>
                             </div>
-                            <strong style={styles.price}>${hotel.price}</strong>
+                            <strong style={styles.price}>${hotel.price}/night</strong>
                           </div>
                         ))}
                       </div>
@@ -1145,7 +1160,7 @@ totalPrice: {
   checkmark: {
     position: 'absolute',
     top: '10px',
-    right: '10px',
+    left: '10px',
     width: '30px',
     height: '30px',
     background: '#3b82f6',
@@ -1156,6 +1171,27 @@ totalPrice: {
     justifyContent: 'center',
     fontSize: '18px',
     fontWeight: 'bold',
+    zIndex: 10,
+  },
+  categoryBadge: {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: 'white',
+    padding: '4px 12px',
+    borderRadius: '20px',
+    fontSize: '11px',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+    boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)',
+    zIndex: 10,
+  },
+  hotelLink: {
+    color: 'inherit',
+    textDecoration: 'none',
+    transition: 'color 0.2s ease',
   },
   confirmButton: {
     width: '100%',

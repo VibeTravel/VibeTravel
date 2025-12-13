@@ -412,26 +412,27 @@ class Phase2Supervisor:
                 print(f"[DEBUG] hotel_2: {hotel_2}")
                 
                 if hotel_1 or hotel_2:
-                    # Helper to process hotel list and fix price format
-                    def process_hotels(hotel_list):
+                    # Helper to process hotel list and fix price format, add category label
+                    def process_hotels(hotel_list, category_label):
                         processed = []
                         for h in hotel_list:
                             h_copy = h.copy()
                             h_copy["price"] = self._parse_cost(h.get("price", 0))
+                            h_copy["category"] = category_label  # Add user-friendly category label
                             processed.append(h_copy)
                         return processed
                     
-                    # Combine cheapest, highest_rated, most_expensive into scenarios
+                    # Combine cheapest, highest_rated, most_expensive into scenarios WITH LABELS
                     scenario_A_hotels = (
-                        process_hotels(hotel_1.get("cheapest", [])) +
-                        process_hotels(hotel_1.get("highest_rated", [])) +
-                        process_hotels(hotel_1.get("most_expensive", []))
+                        process_hotels(hotel_1.get("cheapest", []), "Cheapest") +
+                        process_hotels(hotel_1.get("highest_rated", []), "Highest Rated") +
+                        process_hotels(hotel_1.get("most_expensive", []), "Luxury")
                     )
                     
                     scenario_B_hotels = (
-                        process_hotels(hotel_2.get("cheapest", [])) +
-                        process_hotels(hotel_2.get("highest_rated", [])) +
-                        process_hotels(hotel_2.get("most_expensive", []))
+                        process_hotels(hotel_2.get("cheapest", []), "Cheapest") +
+                        process_hotels(hotel_2.get("highest_rated", []), "Highest Rated") +
+                        process_hotels(hotel_2.get("most_expensive", []), "Luxury")
                     )
                     
                     hotels_result = HotelRecommendations(

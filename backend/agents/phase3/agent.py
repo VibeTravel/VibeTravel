@@ -5,7 +5,7 @@ from agents.utils.data_models import Phase3Input
 
 root_agent = Agent(
     name="NarrativeItineraryPlanner",
-    model="gemini-2.5-flash", # Recommended for complex reasoning and narrative instructions
+    model="gemini-2.5-flash",
     
     description="A powerful ReAct agent that receives user selections from Phase 2 (flights, hotel, activities) and creates an optimized day-by-day itinerary. Uses reasoning to handle capacity constraints, prioritize activities, and ensure realistic scheduling from departure to return home.",
     
