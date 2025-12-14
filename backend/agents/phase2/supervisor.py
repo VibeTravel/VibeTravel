@@ -17,6 +17,15 @@ import re
 # from pydantic import BaseModel, Field, ValidationError
 from datetime import date
 
+def _json_default(obj):
+    # Fix: JSON can't serialize bytes
+    if isinstance(obj, (bytes, bytearray)):
+        return obj.decode("utf-8", errors="replace")
+    # Nice-to-have: if any date objects slip in
+    if isinstance(obj, date):
+        return obj.isoformat()
+    return str(obj)
+
 # ========================================
 # Request Models (Input from Frontend)
 # ========================================
@@ -274,7 +283,7 @@ class Phase2Supervisor:
             
             # Create session
             session_id = str(uuid.uuid4())
-            await session_service.create_session(
+            session_service.create_session(
                 app_name=APP_NAME,
                 user_id=USER_ID,
                 session_id=session_id,
@@ -283,7 +292,7 @@ class Phase2Supervisor:
             # Prepare message
             user_content = types.Content(
                 role="user",
-                parts=[types.Part(text=json.dumps(combined_prompt))],
+                parts=[types.Part(text=json.dumps(combined_prompt, default=_json_default))],
             )
             
             print(f"[Phase2Supervisor] Running orchestrator agent...")
@@ -351,7 +360,7 @@ class Phase2Supervisor:
             print(f"  Activities: {len(activities)}")
             print(f"  Outbound flights: {len(outbound)}")
             print(f"  Return flights: {len(returns)}")
-            print(f"  Raw flights_and_hotels structure: {json.dumps(fh, indent=2)[:500]}...")
+            print(f"  Raw flights_and_hotels structure: {json.dumps(fh, indent=2, default=_json_default)[:500]}...")
             
             # ========================================
             # Map orchestrator_data to Phase2Response models

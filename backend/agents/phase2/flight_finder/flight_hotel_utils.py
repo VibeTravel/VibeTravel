@@ -20,7 +20,7 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 
 ### Find Ariport codes using LLM
 
-def find_airports(city: str, country: str):
+def find_airports(city: str, country: str = ""):
     """Find up to 2 international airport codes for a city using LLM."""
     response = client.chat.completions.create(
         model="gpt-4o-mini",
