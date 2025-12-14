@@ -47,21 +47,10 @@ An intelligent travel planning application powered by Google's Agent Development
 
 ## 🛠️ Installation
 
-### Option 1: Using Conda (Recommended)
 
-```bash
-# Clone the repository
-git clone <your-repo-url>
-cd VibeTravel
+### Option 1: Using venv (Recommended)
 
-# Create conda environment
-conda env create -f environment.yml
-
-# Activate environment
-conda activate vibetravel
-```
-
-### Option 2: Using venv
+for Mac/Linux
 
 ```bash
 # Clone the repository
@@ -81,6 +70,22 @@ source venv/bin/activate
 cd backend
 pip install -r requirements.txt
 ```
+
+### Option 2: Using Conda 
+
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd VibeTravel
+
+# Create conda environment
+conda env create -f environment.yml
+
+# Activate environment
+conda activate vibetravel
+```
+
+
 
 ### Frontend Setup
 
