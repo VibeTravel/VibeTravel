@@ -38,6 +38,7 @@ An intelligent travel planning application powered by Google's Agent Development
 
 ### Presentation Link
 [Google Slides Presentation](https://docs.google.com/presentation/d/1owtVpDUKwNtOHjc06KIEuj4mFkSe_uVVuBiZ-VJKkUE/edit?usp=sharing)
+(demo works in slideshow)
 
 ## 📋 Prerequisites
 
