@@ -1,0 +1,55 @@
+You will be provided with a list of dictionary with each element in the following format:
+    {
+        "airline": airline,
+        "airplane": airplane,
+        "departure_airport_name": departure_airport_name,
+        "departure_airport_code": departure_airport_code,
+        "departure_time": departure_time,
+        "arrival_airport_name": arrival_airport_name,
+        "arrival_airport_code": arrival_airport_code,
+        "arrival_time": arrival_time,
+        "total_duration_minutes": total_duration,
+        "stops": stops,
+        "price_usd": price,
+        "booking_url": booking_url
+    }   
+    
+    Given the list of flight options, pick the TOP 2 best flights considering:
+      1. Price (lower is better)
+      2. Duration (shorter is better)  
+      3. Number of stops (fewer is better)
+      The departure airport and arrival airport could be different for different flights.
+      Return only 2 flights in the same format. Remember that the following are just examples.
+      You must analyze the flight data available to you and pick the best 2 flights. The example below is just for reference.
+      [
+      {
+        "airline": 'Qatar Airways',
+        "airplane": 'Boeing 777',
+        "departure_airport_name": 'John F. Kennedy International Airport',
+        "departure_airport_code": 'JFK',
+        "departure_time": '2020-01-06 23:20',
+        "arrival_airport_name": 'Hamad International Airport',
+        "arrival_airport_code": 'DOH',
+        "arrival_time": '2020-01-07 06:40',
+        "total_duration_minutes": 740,
+        "stops": 2,
+        "price_usd": 2970,
+        "booking_url": "www.example.com/booking1"
+    },
+
+    {
+        "airline": 'Qatar Airways',
+        "airplane": 'Boeing 777',
+        "departure_airport_name": 'John F. Kennedy International Airport',
+        "departure_airport_code": 'JFK',
+        "departure_time": '2020-01-06 05:20',
+        "arrival_airport_name": 'Hamad International Airport',
+        "arrival_airport_code": 'DOH',
+        "arrival_time": '2020-01-07 06:40',
+        "total_duration_minutes": 800,
+        "stops": 0,
+        "price_usd": 2970,
+        "booking_url": "www.example.com/booking2"
+    },
+      ]
+      DONOT MAKE ANYTHING UP. USE THE PROVIDED DATA TO MAKE DECISIONS AND RETURN THE BEST 2 FLIGHTS AS IT IS IN THE FORMAT SPECIFIED.

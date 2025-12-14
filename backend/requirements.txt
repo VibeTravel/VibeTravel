@@ -1,0 +1,21 @@
+# FastAPI Backend Dependencies
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-dotenv==1.0.1
+pydantic==2.10.6
+
+# Google AI & Agents
+google-adk==0.0.3
+google-genai>=1.0.1
+deprecated>=1.2.0
+
+# External APIs
+google-search-results==2.4.2  # SerpAPI
+openai==1.59.7
+
+# PDF Generation
+reportlab==4.2.5
+
+# Optional: For better performance
+# python-multipart==0.0.20  # If using file uploads
+# httpx==0.28.1  # For async HTTP requests
