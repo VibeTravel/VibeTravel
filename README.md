@@ -95,6 +95,7 @@ Create a `.env` file in the `backend/` directory with the following keys:
 
 ```env
 # Required API Keys
+GOOGLE_GENAI_USE_VERTEXAI= FALSE
 GOOGLE_API_KEY=your_google_gemini_api_key_here
 SERPAPI_API_KEY=your_serpapi_key_here
 OPENAI_API_KEY=your_openai_api_key_here
