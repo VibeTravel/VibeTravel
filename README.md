@@ -6,7 +6,7 @@ An intelligent travel planning application powered by Google's Agent Development
 
 ### Phase 1: Destination Discovery 🔍
 - **AI-powered location suggestions** based on your budget, interests, and travel dates
-- **Interactive rating system** with tilt-based interface (Tinder-style swiping)
+- **Interactive rating system** for better user input
 - Beautiful destination cards with images from Unsplash
 
 ### Phase 2: Smart Planning 🎯
